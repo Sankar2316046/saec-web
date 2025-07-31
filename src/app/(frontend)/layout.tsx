@@ -1,19 +1,33 @@
-import React from 'react'
-import './styles.css'
+import type { Metadata } from "next";
+import "./styles.css"
+import { Toaster } from "@/components/ui/sonner";
+import { getUser } from '@/lib/getUser';
+import UserProvider from "@/lib/store-provider";
+import { User } from "@/payload-types";
 
-export const metadata = {
-  description: 'A blank template using Payload in a Next.js app.',
-  title: 'Payload Blank Template',
-}
+export const metadata: Metadata = {
+  title: "Saec-web",
+  description: "Saec-web description",
+};
 
-export default async function RootLayout(props: { children: React.ReactNode }) {
-  const { children } = props
+export default async function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  const user = await getUser();
+  
+  // Cast the user to match the expected type
+  const typedUser = user as (User | null | any);
 
   return (
     <html lang="en">
-      <body>
-        <main>{children}</main>
+      <body className="bg-basebackground">
+        <UserProvider user={typedUser}>
+          {children}
+        </UserProvider>
+        <Toaster />
       </body>
     </html>
-  )
+  );
 }
